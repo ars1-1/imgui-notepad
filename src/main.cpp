@@ -5,6 +5,11 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLES2/gl2.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
+#include <string.h>
+#include <imgui_stdlib.h>
+
+IMGUI_API bool  InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = nullptr, void* user_data = nullptr);
 
 int main(int, char**)
 {
@@ -29,7 +34,7 @@ int main(int, char**)
 #endif
 
     // окошко создаем
-    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Text Editor ImGui", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Text Editor ImGui", nullptr, nullptr);
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
@@ -52,8 +57,8 @@ int main(int, char**)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    // переменные
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    // цвет фона(красный, зеленый, синий, прозрачность)
+    ImVec4 clear_color = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -61,23 +66,20 @@ int main(int, char**)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        // glfwGetWindowSize();
+        // std::cout << glfwGetWindowSize;
 
         {
-            ImGui::Begin("Another Window");
-            static char text[1024 * 16] =
-                "/*\n"
-                " The Pentium F00F bug, shorthand for F0 0F C7 C8,\n"
-                " the hexadecimal encoding of one offending instruction,\n"
-                " more formally, the invalid operand with locked CMPXCHG8B\n"
-                " instruction bug, is a design flaw in the majority of\n"
-                " Intel Pentium, Pentium MMX, and Pentium OverDrive\n"
-                " processors (all in the P5 microarchitecture).\n"
-                "*/\n\n"
-                "label:\n"
-                "\tlock cmpxchg8b eax\n";
+            ImGui::SetNextWindowSize(ImVec2(800, 600));
+            ImGui::SetNextWindowPos(ImVec2(0, 0));
+            if (ImGui::Begin("Text Editor", nullptr, ImGuiWindowFlags_NoResize || ImGuiWindowFlags_NoCollapse)) {
+            std::string s{"test text std::string type"};
             static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
-            ImGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), flags);
-            ImGui::End();
+
+            // IMGUI_API bool  InputTextMultiline(const char* label, std::string* str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+            ImGui::SetCursorPos(ImVec2(15, 20));
+            ImGui::InputTextMultiline("##source", &s, ImVec2(800 - 30, 600 - 40), flags);
+            }ImGui::End();
         }
 
         // Rendering
